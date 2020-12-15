@@ -125,7 +125,7 @@ bool Rook::captureValid(int s_rank, int s_file, int d_rank, int d_file){
     //along the rank
     if (d_rank == s_rank && d_file != s_file){ return true; }
     //along the file
-    if (d_file == s_file && d_rank == s_rank) { return true; }
+    if (d_file == s_file && d_rank != s_rank) { return true; }
     return false;
 }
 
@@ -145,7 +145,7 @@ bool Queen::captureValid(int s_rank, int s_file, int d_rank, int d_file) {
     //moving horizontally along the rank
     if (d_rank == s_rank && d_file != s_file){ return true; }
     //moving vertically along the file
-    if (d_file == s_file && d_rank == s_rank) { return true; }
+    if (d_file == s_file && d_rank != s_rank) { return true; }
     int rank_distance = abs(s_rank - d_rank);
     int file_distance = abs(s_file - d_file);
     //moving diagonally
