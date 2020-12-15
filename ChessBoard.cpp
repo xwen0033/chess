@@ -87,6 +87,51 @@ void ChessBoard::printBoard(){
   printFrame();
 }
 
+ KingPosition ChessBoard::getKingPosition(Colour colour){
+     for (int r = 0; r < 8; r++) {
+        for (int f = 0; f < 8; f++){
+            if (board[r][f] != nullptr){
+                if (board[r][f]->getType() == King){
+                    if(board[r][f]->colour == colour){
+                        KingPosition kingpos = {r,f};
+                        return kingpos;
+                    }
+                }
+            }
+        }
+    }
+ }
+
+ bool ChessBoard::isInCheck(int d_rank, int d_file){
+     Colour attack_colour = board[d_rank][d_file]->colour;
+     KingPosition kpos;
+     if (attack_colour == WHITE){
+         kpos = getKingPosition(BLACK);
+     }else{
+         kpos = getKingPosition(WHITE);
+     }
+     int k_rank = kpos.rank;
+     int k_file = kpos.file;
+     Type attack_type = board[d_rank][d_file]->getType();
+     if (attack_type != Knight && enrouteClear(d_rank,d_file,k_rank,k_file)){
+         if (board[d_rank][d_file]->captureValid(d_rank,d_file,k_rank,k_file)){
+             return true;
+        }
+     }
+
+     if (attack_type == Knight){
+         if (board[d_rank][d_file]->captureValid(d_rank,d_file,k_rank,k_file)){
+             return true;
+        }
+     }
+
+    return false;
+ }
+
+ bool ChessBoard::checkMate(){
+     return false;
+ }
+
 int ChessBoard::checksquare(char const* source, char const* destination){
     //position too long
     if (source[2]!='\0' || destination[2]!='\0'){ return 1; }
@@ -110,7 +155,7 @@ int ChessBoard::checksquare(char const* source, char const* destination){
     Type type = board[s_rank][s_file]->getType();
     if (type != Knight) {
         //cannot jump over other pieces
-        if (!enrouteClear(s_rank,s_file,d_rank,d_file,type)){ return 6; }
+        if (!enrouteClear(s_rank,s_file,d_rank,d_file)){ return 6; }
     }
 
     return 0;
@@ -140,12 +185,22 @@ void ChessBoard::submitMove(char const* source, char const* destination){
                 if (turn == WHITE) { turn = BLACK; } else { turn = WHITE; }
                 board[d_rank][d_file] = board[s_rank][s_file];
                 board[s_rank][s_file] = nullptr;
+                if (isInCheck(d_rank,d_file)){
+                    Colour d_colour;
+                    if (colour == WHITE){d_colour=BLACK;}else{d_colour=WHITE;}
+                    cout << d_colour;
+                    if (checkMate()){
+                        cout << " is in checkmate" << endl;
+                    } else {
+                        cout << " is in check" << endl;
+                    }
+                }
             } else {
                 cout << " cannot move to " << destination << "!" << endl;
             }
         } else { //capture move
-            Colour d_colour = board[d_rank][d_file]->colour;
             Type d_type = board[d_rank][d_file]->getType();
+            Colour d_colour = board[d_rank][d_file]->colour;
             if (d_colour == colour) {
                 cout << " cannot capture it's own piece!" << endl;
             } else {
@@ -168,7 +223,68 @@ void ChessBoard::submitMove(char const* source, char const* destination){
 }
 
 
-bool ChessBoard::enrouteClear(int s_rank, int s_file, int d_rank, int d_file, Type t){
+bool ChessBoard::enrouteClear(int s_rank, int s_file, int d_rank, int d_file){
+    Piece* enrouteSquare;
+    //moving on the same rank
+    if(s_rank == d_rank && s_file != d_file){
+        int distance = d_file - s_file;
+        //no square in between
+        if (abs(distance)==1){ return true; } 
+        for(int i = 1; i < abs(distance); i++){
+            if (distance > 1) {
+                enrouteSquare = board[s_rank][s_file+i];
+            }else if (distance < -1) {
+                enrouteSquare = board[s_rank][s_file-i];
+            }
+            if (enrouteSquare != nullptr) { return false; }
+        }
+        return true;
+    }
+
+    //moving on the same file
+    if(s_rank != d_rank && s_file == d_file){
+        int distance = d_rank - s_rank;
+        //no square in between
+        if (abs(distance)==1){ return true; } 
+        for(int i = 1; i < abs(distance); i++){
+            if (distance > 1) {
+                enrouteSquare = board[s_rank+i][s_file];
+            }else if (distance < -1){
+                enrouteSquare = board[s_rank-i][s_file];
+            }
+            if (enrouteSquare != nullptr) { return false; }
+        }
+        return true;
+    }
+
+    //moving diagonally
+    int rank_distance = d_rank - s_rank;
+    int file_distance = d_file - s_file;
+    //both positive or negative
+    if (rank_distance == file_distance){
+        //no square in between
+        if (abs(rank_distance)==1){ return true; } 
+        for (int i = 1; i < abs(rank_distance); i++){
+            if (rank_distance > 1){
+                enrouteSquare = board[s_rank+i][s_file+i];
+            } else if (rank_distance < -1){
+                enrouteSquare = board[s_rank-i][s_file-i];
+            }
+            if (enrouteSquare != nullptr) { return false; }
+        }
+        return true;
+    }
+    // one negative one positive
+    if (abs(rank_distance)==1 && abs(file_distance)==1){ return true; } 
+    for (int i = 1; i < abs(rank_distance); i++){
+            if (rank_distance > 1){
+                enrouteSquare = board[s_rank+i][s_file-i];
+            } else if (rank_distance < -1){
+                enrouteSquare = board[s_rank-i][s_file+i];
+            }
+            if (enrouteSquare != nullptr) { return false; }
+    }
+
     return true;
 }
 

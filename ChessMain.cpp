@@ -21,8 +21,8 @@ int main() {
 	cb.submitMove("D2", "D4");
 	cout << '\n';
 
-	//cb.submitMove("F8", "B4");
-	//cout << '\n';
+	cb.submitMove("F8", "B4");
+	cout << '\n';
 
 	cout << "=========================\n";
 	cout << "Alekhine vs. Vasic (1931)\n";
