@@ -22,17 +22,32 @@ public:
     void printBoard();
     void printFrame();
     void printRank(int r);
-    void placePieces();
-    void erasePieces();
+    void placePieces(); //place pieces at their begining positions on board 
+    void erasePieces(); //delete all pieces on board
+
     KingPosition getKingPosition(Colour colour);
+
+    //whether opponent is in check after moving the piece to destination
+    //this is where why my checkMate function does not work
+    //it only checks whether this piece at this position makes opponent in check
+    //in the checkMate function, any piece that cannot directly attack opponent's king
+    //will result a false return value dispite existence of piece that checkmate
     bool isInCheck(int d_rank, int d_file);
+
     std::vector <int> possibleMoves(int rank, int file);
     std::vector <int> possibleCaptures(int rank, int file);
+
+    //loop through possible moves to get king out of check
+    //if no such move exists, return true otherwise false
     bool checkMate(Colour colour);
+
     //some sanity checks
     int checksquare(char const* source, char const* destination);
+
     void submitMove(char const* source, char const* destination);
-    //whether other piece is in the way: return false if route not clear 
+
+    //whether other piece is in the way: 
+    //return false if route not clear 
     bool enrouteClear(int s_rank, int s_file, int d_rank, int d_file);
     void resetBoard();
     ~ChessBoard();

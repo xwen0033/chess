@@ -119,6 +119,7 @@ void ChessBoard::printBoard(){
      int k_rank = kpos.rank;
      int k_file = kpos.file;
      Type attack_type = board[d_rank][d_file]->getType();
+     //whether this piece can directly attach opponent's king in the next move
      if (attack_type != Knight && enrouteClear(d_rank,d_file,k_rank,k_file)){
          if (board[d_rank][d_file]->captureValid(d_rank,d_file,k_rank,k_file)){
             return true;
@@ -160,7 +161,7 @@ std::vector <int> ChessBoard::possibleMoves(int rank, int file){
      vector <int> squares;
      for (int r = 0; r < 8; r++) {
          for (int f = 0; f < 8; f++){
-             if (board[r][f] != nullptr){ //regular move
+             if (board[r][f] != nullptr){ //capture move
                 if (r != rank && f != file){
                      if (board[rank][file]->getType()!=Knight){//cannot leap over other pieces
                          if (enrouteClear(rank,file,r,f)&&board[rank][file]->captureValid(rank,file,r,f)){
@@ -255,6 +256,7 @@ std::vector <int> ChessBoard::possibleMoves(int rank, int file){
              }
          }
      }
+     //exhausted all possibilities and still cannot make the king out of check
      return true;
  }
 
