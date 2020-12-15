@@ -151,7 +151,7 @@ void ChessBoard::submitMove(char const* source, char const* destination){
             } else {
                 if (board[s_rank][s_file]->captureValid(s_rank,s_file,d_rank,d_file)){
                     cout << " moves from " << source << " to " << destination;
-                    cout << " taking " << d_colour << "’s " << d_type << endl;
+                    cout << " taking " << d_colour << "'s " << d_type << endl;
                     if (colour == WHITE){ wCount++; }else{ bCount++; }
                     if (turn == WHITE) { turn = BLACK; } else { turn = WHITE; }
                     Piece* tmp = board[d_rank][d_file];
@@ -160,7 +160,7 @@ void ChessBoard::submitMove(char const* source, char const* destination){
                     board[s_rank][s_file] = nullptr;
                 } else {
                     cout << " cannot move to " << destination << " and capture ";
-                    cout << d_colour << "’s " << d_type << endl;
+                    cout << d_colour << "'s " << d_type << endl;
                 }
             }
         }

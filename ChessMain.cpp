@@ -46,6 +46,7 @@ int main() {
 	cb.submitMove("F1", "D3");
 	cb.submitMove("B4", "C3");
 	cout << '\n';
+	cb.printBoard();
 
 	cb.submitMove("B2", "C3");
 	cb.submitMove("H7", "H6");
@@ -66,12 +67,12 @@ int main() {
 	cb.submitMove("E4", "D3");
 	cb.submitMove("B7", "B6");
 	cout << '\n';
-	cb.printBoard();
 
 	cb.submitMove("E2", "E6");
+	cb.printBoard();
 	cb.submitMove("F7", "E6");
 	cout << '\n';
-	cb.printBoard();
+	
 
 	cb.submitMove("D3", "G6");
 	cout << '\n';
