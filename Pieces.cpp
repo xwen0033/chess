@@ -1,5 +1,4 @@
 #include "Pieces.h"
-#include <cstdlib>
 
 ostream& operator<<(ostream& o, Colour c) {
     switch(c) {

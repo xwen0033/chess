@@ -1,6 +1,7 @@
 #ifndef PIECES_H
 #define PIECES_H
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 

@@ -221,6 +221,7 @@ std::vector <int> ChessBoard::possibleMoves(int rank, int file){
                         board[d_rank][d_file] = nullptr;
                      }
 
+                     //no possible regular move gets player out of check
                      //check capture moves
                      vector <int> captures = possibleCaptures(r, f);
                      for (int i = 0; i < captures.size()/2; i++){
@@ -249,6 +250,7 @@ std::vector <int> ChessBoard::possibleMoves(int rank, int file){
                         board[r][f] = board[d_rank][d_file];
                         board[d_rank][d_file] = tmp;
                      }
+                     //no possible capture move moves king out of check
                  }
              }
          }
@@ -296,7 +298,8 @@ void ChessBoard::submitMove(char const* source, char const* destination){
             case 3: cout << "Invalid destination square coordinate!" << endl; break;
             case 4: cout << "There is no piece at position " << source << "!" << endl; break;
             case 5: cout << "It is not " << board[s_rank][s_file]->colour << "’s turn to move!" << endl; break;
-            case 6: cout << board[s_rank][s_file]->getType() << " cannot leap over other pieces!" << endl;
+            case 6: cout << board[s_rank][s_file]->colour << "'s " <<board[s_rank][s_file]->getType();
+                    cout << " cannot move to " << destination << "!" << endl;
         }
     }else { //more complicated errors
         Type type = board[s_rank][s_file]->getType();
