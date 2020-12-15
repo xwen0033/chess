@@ -4,6 +4,11 @@
 
 using namespace std;
 
+//the pieces are only responsible for checking 
+//whether the destination square follows moving rule
+//It is the ChessBoard's responsibility to check 
+//the validity of squares and whether other pieces are in the way
+
 enum Colour {
     WHITE,
     BLACK
@@ -31,7 +36,7 @@ public:
     Piece(Colour colour);
     virtual char getSign();
     virtual Type getType();
-    virtual bool moveValid(int s_rank, int s_file, int d_rank, int d_file, int wCount, int bCount);
+    virtual bool moveValid(int s_rank, int s_file, int d_rank, int d_file);
     virtual bool captureValid(int s_rank, int s_file, int d_rank, int d_file);
     virtual ~Piece();
 };
@@ -39,11 +44,12 @@ public:
 class Pawn : public Piece {
     char sign;//P for White p for Black
     static const Type type = Type::Pawn;
+    int count; //move count
 public:
     Pawn(Colour colour);
     char getSign() override;
     Type getType() override;
-    bool moveValid(int s_rank, int s_file, int d_rank, int d_file, int wCount, int bCount) override;
+    bool moveValid(int s_rank, int s_file, int d_rank, int d_file) override;
     bool captureValid(int s_rank, int s_file, int d_rank, int d_file) override;
     ~Pawn() override;
 };
@@ -55,6 +61,8 @@ public:
     Knight(Colour colour);
     char getSign() override;
     Type getType() override;
+    bool moveValid(int s_rank, int s_file, int d_rank, int d_file) override;
+    bool captureValid(int s_rank, int s_file, int d_rank, int d_file) override;
     ~Knight() override;
 };
 
@@ -65,6 +73,8 @@ public:
     Bishop(Colour colour);
     char getSign() override;
     Type getType() override;
+    bool moveValid(int s_rank, int s_file, int d_rank, int d_file) override;
+    bool captureValid(int s_rank, int s_file, int d_rank, int d_file) override;
     ~Bishop() override;
 };
 
@@ -75,6 +85,8 @@ public:
     Rook(Colour colour);
     char getSign() override;
     Type getType() override;
+    bool moveValid(int s_rank, int s_file, int d_rank, int d_file) override;
+    bool captureValid(int s_rank, int s_file, int d_rank, int d_file) override;
     ~Rook() override;
 };
 
@@ -85,6 +97,8 @@ public:
     Queen(Colour colour);
     char getSign() override;
     Type getType() override;
+    bool moveValid(int s_rank, int s_file, int d_rank, int d_file) override;
+    bool captureValid(int s_rank, int s_file, int d_rank, int d_file) override;
     ~Queen() override;
 };
 
@@ -95,6 +109,8 @@ public:
     King(Colour colour);
     char getSign() override;
     Type getType() override;
+    bool moveValid(int s_rank, int s_file, int d_rank, int d_file) override;
+    bool captureValid(int s_rank, int s_file, int d_rank, int d_file) override;
     ~King() override;
 };
 

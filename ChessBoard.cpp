@@ -120,7 +120,7 @@ void ChessBoard::submitMove(char const* source, char const* destination){
     int s_file = source[0] - 'A', s_rank = '8'- source[1];
     int d_file = destination[0] - 'A', d_rank = '8' - destination[1];
     int error = checksquare(source, destination);
-    if (error != 0) {
+    if (error != 0) { //simple errors
         switch(error) {
             case 1: cout << "Invalid square coordinates: too long" << endl; break;
             case 2: cout << "Invalid source square coordinate!" << endl; break;
@@ -129,12 +129,12 @@ void ChessBoard::submitMove(char const* source, char const* destination){
             case 5: cout << "It is not " << board[s_rank][s_file]->colour << "’s turn to move!" << endl; break;
             case 6: cout << board[s_rank][s_file]->getType() << " cannot leap over other pieces!" << endl;
         }
-    }else {
+    }else { //more complicated errors
         Type type = board[s_rank][s_file]->getType();
         Colour colour = board[s_rank][s_file]->colour;
         cout << colour <<"'s "<< type;
         if (board[d_rank][d_file] == nullptr) { //regular move
-            if (board[s_rank][s_file]->moveValid(s_rank,s_file,d_rank,d_file,wCount,bCount)){
+            if (board[s_rank][s_file]->moveValid(s_rank,s_file,d_rank,d_file)){
                 cout << " moves from " << source << " to " << destination << endl;
                 if (colour == WHITE){ wCount++; } else { bCount++; }
                 if (turn == WHITE) { turn = BLACK; } else { turn = WHITE; }
@@ -176,6 +176,8 @@ void ChessBoard::resetBoard(){
     erasePieces();
     placePieces();
     turn = WHITE; //white moves first
+    wCount = 0; //white move count
+    bCount = 0; //black move count
     cout << "A new chess game is started!" <<endl;
 }
 
