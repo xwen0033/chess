@@ -213,6 +213,16 @@ void ChessBoard::submitMove(char const* source, char const* destination){
                     delete tmp; //delete the captured piece
                     board[d_rank][d_file] = board[s_rank][s_file];
                     board[s_rank][s_file] = nullptr;
+                    if (isInCheck(d_rank,d_file)){
+                    Colour d_colour;
+                    if (colour == WHITE){d_colour=BLACK;}else{d_colour=WHITE;}
+                    cout << d_colour;
+                    if (checkMate()){
+                        cout << " is in checkmate" << endl;
+                    } else {
+                        cout << " is in check" << endl;
+                    }
+                }
                 } else {
                     cout << " cannot move to " << destination << " and capture ";
                     cout << d_colour << "'s " << d_type << endl;
