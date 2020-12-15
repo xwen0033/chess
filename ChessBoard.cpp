@@ -57,6 +57,8 @@ void ChessBoard::erasePieces(){
 ChessBoard::ChessBoard(){
     placePieces();
     turn = WHITE; //white moves first
+    wCount = 0;
+    bCount = 0;
     cout << "A new chess game is started!" <<endl;
 }
 
@@ -88,18 +90,23 @@ void ChessBoard::printBoard(){
 }
 
  KingPosition ChessBoard::getKingPosition(Colour colour){
+     int king_rank;
+     int king_file;
      for (int r = 0; r < 8; r++) {
         for (int f = 0; f < 8; f++){
             if (board[r][f] != nullptr){
                 if (board[r][f]->getType() == King){
                     if(board[r][f]->colour == colour){
-                        KingPosition kingpos = {r,f};
-                        return kingpos;
+                        king_rank = r;
+                        king_file = f;
+                        break;
                     }
                 }
             }
         }
     }
+    KingPosition kingpos = {king_rank,king_file};
+    return kingpos;
  }
 
  bool ChessBoard::isInCheck(int d_rank, int d_file){

@@ -11,8 +11,8 @@ class ChessBoard {
     //array of pointers to pieces or nullptr for unoccupied squares
     Piece* board[8][8]; 
     bool turn; //which side's turn: black or white
-    int wCount = 0; //white move count
-    int bCount = 0; //black move count
+    int wCount; //white move count
+    int bCount; //black move count
 public:
     ChessBoard();
     void printBoard();
