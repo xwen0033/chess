@@ -1,5 +1,5 @@
-chessboard: ChessMain.o ChessBoard.o Pieces.o
-	g++ -Wall -g ChessMain.o ChessBoard.o Pieces.o -o chessboard
+chess: ChessMain.o ChessBoard.o Pieces.o
+	g++ -Wall -g ChessMain.o ChessBoard.o Pieces.o -o chess
 
 ChessMain.o: ChessMain.cpp ChessBoard.h Pieces.h
 	g++ -Wall -g -c ChessMain.cpp
@@ -11,4 +11,4 @@ Pieces.o: Pieces.cpp Pieces.h
 	g++ -Wall -g -c Pieces.cpp
 
 clean:
-	rm -f *.o chessboard
+	rm -f *.o chess
