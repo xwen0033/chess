@@ -105,31 +105,37 @@ void ChessBoard::printBoard(){
     return kingpos;
  }
 
- bool ChessBoard::isInCheck(int d_rank, int d_file){
-     Colour attack_colour = board[d_rank][d_file]->colour;
-     Colour d_colour;
+ bool ChessBoard::isInCheck(Colour attack_colour){
      KingPosition kpos;
      if (attack_colour == WHITE){
          kpos = getKingPosition(BLACK);
-         d_colour = BLACK;
      }else{
          kpos = getKingPosition(WHITE);
-         d_colour = WHITE;
      }
      int k_rank = kpos.rank;
      int k_file = kpos.file;
-     Type attack_type = board[d_rank][d_file]->getType();
-     //whether this piece can directly attach opponent's king in the next move
-     if (attack_type != Knight && enrouteClear(d_rank,d_file,k_rank,k_file)){
-         if (board[d_rank][d_file]->captureValid(d_rank,d_file,k_rank,k_file)){
-            return true;
-        }
-     }
 
-     if (attack_type == Knight){
-         if (board[d_rank][d_file]->captureValid(d_rank,d_file,k_rank,k_file)){
-            return true;
-        }
+     //loop over each piece's possibility
+     for (int r = 0; r < 8; r++) {
+         for (int f = 0; f < 8; f++){
+             if(board[r][f] != nullptr && board[r][f]->colour == attack_colour){
+                 Type attack_type = board[r][f]->getType();
+                 //whether this piece can directly attach opponent's king in the next move
+                 if (attack_type != Knight && enrouteClear(r,f,k_rank,k_file)){
+                    if (board[r][f]->captureValid(r,f,k_rank,k_file)){
+                        return true;
+                    }
+                }
+
+                if (attack_type == Knight){
+                    if (board[r][f]->captureValid(r,f,k_rank,k_file)){
+                        return true;
+                    }
+                }
+                 
+                     
+             }
+         }
      }
 
     return false;
@@ -158,10 +164,11 @@ std::vector <int> ChessBoard::possibleMoves(int rank, int file){
  }
 
  std::vector <int> ChessBoard::possibleCaptures(int rank, int file){
+     Colour attack_colour = board[rank][file]->colour;
      vector <int> squares;
      for (int r = 0; r < 8; r++) {
          for (int f = 0; f < 8; f++){
-             if (board[r][f] != nullptr){ //capture move
+             if (board[r][f] != nullptr && board[r][f]->colour != attack_colour){ //capture move
                 if (r != rank && f != file){
                      if (board[rank][file]->getType()!=Knight){//cannot leap over other pieces
                          if (enrouteClear(rank,file,r,f)&&board[rank][file]->captureValid(rank,file,r,f)){
@@ -182,9 +189,6 @@ std::vector <int> ChessBoard::possibleMoves(int rank, int file){
  }
 
  bool ChessBoard::checkMate(Colour colour){
-     KingPosition kpos = getKingPosition(colour);
-     int k_rank = kpos.rank;
-     int k_file = kpos.file;
      Colour attackColour;
      if (colour == WHITE) {attackColour = BLACK;} else {attackColour = WHITE;}
 
@@ -192,67 +196,49 @@ std::vector <int> ChessBoard::possibleMoves(int rank, int file){
      //whether it removes the king out of check
      for (int r = 0; r < 8; r++) {
          for (int f = 0; f < 8; f++){
-             if(board[r][f] != nullptr){
-                 if (board[r][f]->colour == colour){
-                     //check regular moves
-                     vector <int> moves = possibleMoves(r, f);
-                     for (int i = 0; i < moves.size()/2; i++){
-                         int d_rank = moves[2*i];
-                         int d_file = moves[2*i+1];
-                         //do move
-                         board[d_rank][d_file] = board[r][f];
-                         board[r][f] = nullptr;
-                         //whether opponent's piece can still make king in check
-                         for (int r2 = 0; r2 < 8; r2++) {
-                             for (int f2 = 0; f2 < 8; f2++){
-                                 if(board[r2][f2] != nullptr){
-                                     if (board[r2][f2]->colour == attackColour){
-                                         if(!isInCheck(r2,f2)){
-                                             //undo move
-                                             board[r][f] = board[d_rank][d_file];
-                                             board[d_rank][d_file] = nullptr;
-                                             return false;
-                                         }
-                                     }
-                                }
-                             }
-                        }
-                        //undo move 
+             if(board[r][f] != nullptr && board[r][f]->colour == colour){
+                //check regular moves
+                vector <int> moves = possibleMoves(r, f);
+                for (int i = 0; i < moves.size()/2; i++){
+                    int d_rank = moves[2*i];
+                    int d_file = moves[2*i+1];
+                    //do move
+                    board[d_rank][d_file] = board[r][f];
+                    board[r][f] = nullptr;
+                    //whether opponent's piece can still make king in check
+                    if (!isInCheck(attackColour)){
+                        //undo move
                         board[r][f] = board[d_rank][d_file];
                         board[d_rank][d_file] = nullptr;
-                     }
+                        return false;
+                    }
+                    //undo move 
+                    board[r][f] = board[d_rank][d_file];
+                    board[d_rank][d_file] = nullptr;
+                }
 
-                     //no possible regular move gets player out of check
-                     //check capture moves
-                     vector <int> captures = possibleCaptures(r, f);
-                     for (int i = 0; i < captures.size()/2; i++){
-                         int d_rank = captures[2*i];
-                         int d_file = captures[2*i+1];
-                         //do move
-                         Piece* tmp = board[d_rank][d_file];
-                         board[d_rank][d_file] = board[r][f];
-                         board[r][f] = nullptr;
-                         //whether opponent's piece can still make king in check
-                         for (int r2 = 0; r2 < 8; r2++) {
-                             for (int f2 = 0; f2 < 8; f2++){
-                                 if(board[r2][f2] != nullptr){
-                                     if (board[r2][f2]->colour == attackColour){
-                                         if(!isInCheck(r2,f2)){
-                                             //undo move
-                                             board[r][f] = board[d_rank][d_file];
-                                             board[d_rank][d_file] = tmp;
-                                             return false;
-                                         }
-                                     }
-                                }
-                             }
-                        }
-                        //undo move 
+                //no possible regular move gets player out of check
+                //check capture moves
+                vector <int> captures = possibleCaptures(r, f);
+                for (int i = 0; i < captures.size()/2; i++){
+                    int d_rank = captures[2*i];
+                    int d_file = captures[2*i+1];
+                    //do move
+                    Piece* tmp = board[d_rank][d_file];
+                    board[d_rank][d_file] = board[r][f];
+                    board[r][f] = nullptr;
+                    //whether opponent's piece can still make king in check
+                    if (!isInCheck(attackColour)){
+                        //undo move
                         board[r][f] = board[d_rank][d_file];
                         board[d_rank][d_file] = tmp;
-                     }
-                     //no possible capture move moves king out of check
-                 }
+                        return false;
+                    }
+                    //undo move 
+                    board[r][f] = board[d_rank][d_file];
+                    board[d_rank][d_file] = tmp;
+                }
+                //no possible capture move moves king out of check
              }
          }
      }
@@ -314,7 +300,7 @@ void ChessBoard::submitMove(char const* source, char const* destination){
                 if (turn == WHITE) { turn = BLACK; } else { turn = WHITE; }
                 board[d_rank][d_file] = board[s_rank][s_file];
                 board[s_rank][s_file] = nullptr;
-                if (isInCheck(d_rank,d_file)){
+                if (isInCheck(colour)){
                     Colour d_colour;
                     if (colour == WHITE){d_colour=BLACK;}else{d_colour=WHITE;}
                     cout << d_colour;
@@ -342,7 +328,7 @@ void ChessBoard::submitMove(char const* source, char const* destination){
                     delete tmp; //delete the captured piece
                     board[d_rank][d_file] = board[s_rank][s_file];
                     board[s_rank][s_file] = nullptr;
-                    if (isInCheck(d_rank,d_file)){
+                    if (isInCheck(colour)){
                         Colour d_colour;
                         if (colour == WHITE){d_colour=BLACK;}else{d_colour=WHITE;}
                         cout << d_colour;
