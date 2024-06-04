@@ -28,10 +28,6 @@ public:
     KingPosition getKingPosition(Colour colour);
 
     //whether opponent is in check after moving the piece to destination
-    //this is where why my checkMate function does not work
-    //it only checks whether this piece at this position makes opponent in check
-    //in the checkMate function, any piece that cannot directly attack opponent's king
-    //will result a false return value dispite existence of piece that checkmate
     bool isInCheck(Colour attack_colour);
 
     std::vector <int> possibleMoves(int rank, int file);
